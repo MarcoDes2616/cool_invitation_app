@@ -1,10 +1,4 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import axiosInstance from '../services/axios';
-import { defaultsContent } from '../utils/defaultsContent';
-import useLocalStorage from '../hooks/useLocalStorage';
-import { lan } from '../utils/lenguages';
-
-const { storageKeys, language : defaultLan } = defaultsContent;
 
 const MainContext = createContext();
 
@@ -16,7 +10,7 @@ export const useApp = () => {
   return context;
 };
 
-export const AppProvider = ({ children }) => {
+export const MainProvider = ({ children }) => {
 
   const value = {
 

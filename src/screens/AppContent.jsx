@@ -1,9 +1,9 @@
-
+import { EXPO_PUBLIC_API_LOCAL } from "@env";
 
 const AppContent = () => {
   return (
-    <View>
-      <Text>App Content</Text>
+    <View style={styles.container}>
+      <Text>{EXPO_PUBLIC_API_LOCAL}</Text>
     </View>
   );
 };
@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
 });
 
 export default AppContent;
+
 import {
   Text,
   View,

@@ -6,10 +6,10 @@ import { lan } from '../utils/lenguages';
 
 const { storageKeys, language : defaultLan } = defaultsContent;
 
-const AppContext = createContext();
+const MainContext = createContext();
 
 export const useApp = () => {
-  const context = useContext(AppContext);
+  const context = useContext(MainContext);
   if (!context) {
     throw new Error('useApp debe ser usado dentro de un AppProvider');
   }
@@ -23,10 +23,10 @@ export const AppProvider = ({ children }) => {
   };
 
   return (
-    <AppContext.Provider value={value}>
+    <MainContext.Provider value={value}>
       {children}
-    </AppContext.Provider>
+    </MainContext.Provider>
   );
 };
 
-export default AppContext;
+export default MainContext;

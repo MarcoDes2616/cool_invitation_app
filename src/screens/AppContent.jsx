@@ -1,30 +1,20 @@
+import { Text, StyleSheet } from "react-native";
+import { SafeAreaView } from "../components/SafeAreaView";
 import { EXPO_PUBLIC_API_LOCAL } from "@env";
 
 const AppContent = () => {
   return (
-    <View style={styles.container}>
-      <Text>{EXPO_PUBLIC_API_LOCAL}</Text>
-    </View>
+    <SafeAreaView style={styles.container} >
+        <Text>{EXPO_PUBLIC_API_LOCAL}</Text>
+    </SafeAreaView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    height: "100%",
   },
 });
 
 export default AppContent;
-
-import {
-  Text,
-  View,
-  StatusBar,
-  Platform,
-  useWindowDimensions,
-  StyleSheet,
-  Image,
-  ImageBackground,
-} from "react-native";

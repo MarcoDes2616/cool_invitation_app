@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Platform,
+  Text,
 } from 'react-native';
 import { Video, ResizeMode } from 'expo-audio';
 import { Ionicons } from '@expo/vector-icons';
@@ -101,16 +102,16 @@ const IntroVideoModal = ({ visible, onClose }) => {
 
           {/* Contenedor del video */}
           <View style={styles.videoContainer}>
-            <Video
+            {/* <Video
               ref={videoRef}
               source={require('../../../assets/intro.mp4')}
               style={styles.video}
-            //   resizeMode={ResizeMode.CONTAIN}
+              resizeMode={ResizeMode.CONTAIN}
               shouldPlay={isPlaying}
               isLooping={false}
               onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
               onError={() => setHasError(true)}
-            />
+            /> */}
 
             {/* Controles personalizados */}
             <View style={styles.controlsContainer}>

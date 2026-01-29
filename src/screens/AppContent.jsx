@@ -9,14 +9,12 @@ import useLocalStorage from "../hooks/useLocalStorage";
 const AppContent = () => {
   const { getKey, getStorage, saveLocal } = useLocalStorage();
   const { language } = useMain();
-  const [showIntro, setShowIntro] = useState("");
+  const [showIntro, setShowIntro] = useState(true);
 
   useEffect(() => {
     checkFirstTime();
-    const intro = getStorage();
-    console.log(intro);
-    
-    setShowIntro(intro);
+    // const intro = getKey("hasSeenIntro");
+    // setShowIntro(intro);
   }, []);
 
   const checkFirstTime = async () => {
@@ -43,13 +41,13 @@ const AppContent = () => {
     <SafeAreaView style={styles.container}>
       <Text>{EXPO_PUBLIC_API_LOCAL}</Text>
       <Text>{language}</Text>
-      <Text>{showIntro}</Text>
+      <Text>{showIntro ? "true" : "false"}</Text>
 
       {/* Modal del video */}
       <IntroVideoModal 
         visible={showIntro} 
         onClose={handleCloseIntro} 
-      />
+      /> 
     </SafeAreaView>
   );
 };

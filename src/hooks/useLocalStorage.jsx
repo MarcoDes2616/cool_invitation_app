@@ -102,10 +102,9 @@ const useLocalStorage = () => {
           }
         } else {
           const entries = Object.keys(initialData);
-          console.log(entries);
-          await AsyncStorage.multiSet(
-            entries.map(key => [key, initialData[key]])
-          );
+
+          const local = await entries.map(key => saveLocal(key, initialData[key]));
+          await Promise.all(local);
         }
         return true;
       } catch (error) {

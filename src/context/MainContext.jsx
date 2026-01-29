@@ -29,7 +29,7 @@ export const MainProvider = ({ children }) => {
     // Aquí luego agregarás la detección de autenticación biométrica
     // Por ahora lo dejamos en false
     setHasBiometricAuth(false);
-    createFirstStorage(firsLocalStorageSetup);
+    // createFirstStorage(firsLocalStorageSetup);
     setLenguageByStorage();
   }, []);
 

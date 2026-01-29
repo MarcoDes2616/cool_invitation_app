@@ -15,7 +15,8 @@ export const MainProvider = ({ children }) => {
     userToken: '',
     userData: '',
     deviceId: '',
-    guestData: {},
+    guestData: "",
+    hasSeenIntro: 'false',
   }
 
   useEffect(() => {
@@ -32,9 +33,9 @@ export const MainProvider = ({ children }) => {
     setLenguageByStorage();
   }, []);
 
-  useEffect(() => {
-    saveLocal('languages', language);
-  }, [language]);
+  // useEffect(() => {
+  //   saveLocal('languages', language);
+  // }, [language]);
 
 
   const setLenguageByStorage = () => {

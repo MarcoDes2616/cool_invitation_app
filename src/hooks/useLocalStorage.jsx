@@ -101,8 +101,10 @@ const useLocalStorage = () => {
             localStorage.setItem(key, value);
           }
         } else {
+          const entries = Object.keys(initialData);
+          console.log(entries);
           await AsyncStorage.multiSet(
-            Object.entries(initialData).map(([key, value]) => [key, value])
+            entries.map(key => [key, initialData[key]])
           );
         }
         return true;

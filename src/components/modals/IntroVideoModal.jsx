@@ -1,5 +1,5 @@
 // src/components/modals/IntroVideoModal.jsx
-import { useState, useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   Modal,
   View,
@@ -7,162 +7,78 @@ import {
   TouchableOpacity,
   Dimensions,
   Platform,
-  Text,
+  Text
 } from 'react-native';
-import { Video, ResizeMode } from 'expo-audio';
+import { useEvent } from 'expo';
+import { useVideoPlayer, VideoView } from 'expo-video';
 import { Ionicons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
 
 const IntroVideoModal = ({ visible, onClose }) => {
-  const videoRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [hasError, setHasError] = useState(false);
 
-  // Resetear estado cuando se cierra/reabre
-  useEffect(() => {
+  // 2. Crear y configurar el reproductor de video
+  // El archivo local se pasa con require()
+  const player = useVideoPlayer(require('../../../assets/intro.mp4'), (player) => {
+    // Configuración inicial: no loop y reproducir automáticamente cuando el modal sea visible
+    player.loop = true;
     if (visible) {
-      setIsPlaying(true);
-      setHasError(false);
+      player.play();
     }
-  }, [visible]);
+  });
 
-  // Reproducir automáticamente cuando es visible
+  // 3. Escuchar el estado de reproducción
+  const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player?.playing });
+
+  // 4. Efecto para pausar/reproducir según la visibilidad del modal
   useEffect(() => {
-    if (visible && videoRef.current) {
-      playVideo();
+    if (!visible && player) {
+      player.pause();
+      // Opcional: rebobinar al inicio cuando se cierra
+      // player.seekTo(0);
     }
-  }, [visible]);
-
-  const playVideo = async () => {
-    try {
-      if (videoRef.current) {
-        await videoRef.current.playAsync();
-        setIsPlaying(true);
-      }
-    } catch (error) {
-      console.log('Error al reproducir video:', error);
-      setHasError(true);
+    // Reproducir automáticamente cuando el modal se abre
+    if (visible && player && !player.playing) {
+      player.play();
     }
-  };
-
-  const pauseVideo = async () => {
-    try {
-      if (videoRef.current && isPlaying) {
-        await videoRef.current.pauseAsync();
-        setIsPlaying(false);
-      }
-    } catch (error) {
-      console.log('Error al pausar video:', error);
-    }
-  };
-
-  const replayVideo = async () => {
-    try {
-      if (videoRef.current) {
-        await videoRef.current.replayAsync();
-        setIsPlaying(true);
-        setHasError(false);
-      }
-    } catch (error) {
-      console.log('Error al reiniciar video:', error);
-    }
-  };
-
-  const handleClose = async () => {
-    try {
-      if (videoRef.current) {
-        await videoRef.current.pauseAsync();
-      }
-    } catch (error) {
-      console.log('Error al pausar video al cerrar:', error);
-    }
-    onClose();
-  };
-
-  const handlePlaybackStatusUpdate = (status) => {
-    if (status.didJustFinish) {
-      setIsPlaying(false);
-    }
-  };
+  }, [visible, player]);
 
   return (
     <Modal
       visible={visible}
       animationType="fade"
       transparent={true}
-      onRequestClose={handleClose}
+      onRequestClose={onClose}
     >
       <View style={styles.overlay}>
         <View style={styles.container}>
           {/* Botón de cerrar */}
-          <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
+          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Ionicons name="close-circle" size={32} color="#FFFFFF" />
           </TouchableOpacity>
 
-          {/* Contenedor del video */}
+          {/* Contenedor del video con VideoView */}
           <View style={styles.videoContainer}>
-            {/* <Video
-              ref={videoRef}
-              source={require('../../../assets/intro.mp4')}
+            <VideoView
               style={styles.video}
-              resizeMode={ResizeMode.CONTAIN}
-              shouldPlay={isPlaying}
-              isLooping={false}
-              onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
-              onError={() => setHasError(true)}
-            /> */}
-
-            {/* Controles personalizados */}
-            <View style={styles.controlsContainer}>
-              {hasError ? (
-                <TouchableOpacity style={styles.replayButton} onPress={replayVideo}>
-                  <Ionicons name="reload-circle" size={48} color="#FFFFFF" />
-                </TouchableOpacity>
-              ) : (
-                <>
-                  {!isPlaying && (
-                    <TouchableOpacity style={styles.playButton} onPress={playVideo}>
-                      <Ionicons name="play-circle" size={48} color="#FFFFFF" />
-                    </TouchableOpacity>
-                  )}
-                  {isPlaying && (
-                    <TouchableOpacity style={styles.playButton} onPress={pauseVideo}>
-                      <Ionicons name="pause-circle" size={48} color="#FFFFFF" />
-                    </TouchableOpacity>
-                  )}
-                </>
-              )}
-            </View>
+              player={player}
+              allowsFullscreen={false} // Puedes activarlo si lo deseas
+              allowsPictureInPicture={false}
+              nativeControls={true} // Usamos nuestros controles personalizados
+            />
           </View>
 
-          {/* Mensaje de error */}
-          {hasError && (
-            <View style={styles.errorContainer}>
-              <Ionicons name="warning" size={24} color="#FF6B6B" />
-              <Text style={styles.errorText}>
-                No se pudo cargar el video. Intenta nuevamente.
-              </Text>
-            </View>
-          )}
-
-          {/* Texto descriptivo */}
+          {/* Texto descriptivo (opcional, mantenido de tu versión) */}
           <View style={styles.descriptionContainer}>
             <Text style={styles.title}>¡Bienvenido a Cool Invitation! 🎉</Text>
             <Text style={styles.description}>
               Crea invitaciones digitales increíbles para tus eventos
             </Text>
-            <Text style={styles.steps}>
-              1. Registra tu evento{"\n"}
-              2. Diseñamos tu invitación{"\n"}
-              3. Invita a tus contactos{"\n"}
-              4. ¡Celebra con estilo!
-            </Text>
           </View>
 
-          {/* Botón para saltar */}
-          <TouchableOpacity style={styles.skipButton} onPress={handleClose}>
-            <Text style={styles.skipButtonText}>Saltar introducción</Text>
+          {/* Botón para saltar/empezar */}
+          <TouchableOpacity style={styles.skipButton} onPress={onClose}>
+            <Text style={styles.skipButtonText}>Comenzar</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -170,6 +86,7 @@ const IntroVideoModal = ({ visible, onClose }) => {
   );
 };
 
+// Tus estilos pueden permanecer prácticamente iguales
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
@@ -206,46 +123,30 @@ const styles = StyleSheet.create({
   },
   videoContainer: {
     width: '100%',
-    height: height * 0.35,
+    height: height * 0.65,
     borderRadius: 15,
     overflow: 'hidden',
     marginBottom: 15,
     backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   video: {
     width: '100%',
-    height: '100%',
+    height: '110%',
   },
   controlsContainer: {
     position: 'absolute',
     bottom: 10,
-    alignSelf: 'center',
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'center',
-  },
-  playButton: {
+    alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     borderRadius: 24,
     padding: 5,
   },
-  replayButton: {
-    backgroundColor: 'rgba(255, 107, 107, 0.7)',
-    borderRadius: 24,
-    padding: 5,
-  },
-  errorContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 107, 107, 0.1)',
-    padding: 10,
-    borderRadius: 10,
-    marginBottom: 15,
-  },
-  errorText: {
-    color: '#FF6B6B',
-    marginLeft: 10,
-    fontSize: 14,
+  controlButton: {
+    marginHorizontal: 10,
   },
   descriptionContainer: {
     alignItems: 'center',
@@ -263,12 +164,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     marginBottom: 15,
-  },
-  steps: {
-    color: '#4ECDC4',
-    fontSize: 14,
-    textAlign: 'center',
-    lineHeight: 22,
   },
   skipButton: {
     paddingVertical: 12,

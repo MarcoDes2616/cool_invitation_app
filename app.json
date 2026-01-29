@@ -1,5 +1,14 @@
 {
   "expo": {
+     "plugins": [
+      [
+        "expo-video",
+        {
+          "supportsBackgroundPlayback": true,
+          "supportsPictureInPicture": true
+        }
+      ]
+    ],
     "name": "cool_invitation_app",
     "slug": "cool-invitation-app",
     "version": "1.0.0",

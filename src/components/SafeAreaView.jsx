@@ -7,6 +7,12 @@ export const SafeAreaView = ({
   edges = ['top', 'bottom', 'left', 'right'] 
 }) => {
   const insets = useSafeAreaInsets();
+  const safeArea = {
+    top: insets.top,
+    bottom: insets.bottom,
+    left: insets.left,
+    right: insets.right,
+  };
   
   const paddingStyle = {};
   

@@ -3,20 +3,20 @@ import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const useLocalStorage = () => {
-  const [plataforma, setPlataforma] = useState(null);
+  const [plataform, setPlataform] = useState(null);
 
   useEffect(() => {
     if (Platform.OS === "web") {
-      setPlataforma("web");
+      setPlataform("web");
     } else {
-      setPlataforma("native");
+      setPlataform("native");
     }
   }, []);
 
   const saveLocal = useCallback(
     async (clave, valor) => {
       try {
-        if (plataforma === "web") {
+        if (plataform === "web") {
           localStorage.setItem(clave, valor);
         } else {
           await AsyncStorage.setItem(clave, valor);
@@ -27,13 +27,13 @@ const useLocalStorage = () => {
         return false;
       }
     },
-    [plataforma]
+    [plataform]
   );
 
   const deleteLocal = useCallback(
     async (clave) => {
       try {
-        if (plataforma === "web") {
+        if (plataform === "web") {
           localStorage.removeItem(clave);
         } else {
           await AsyncStorage.removeItem(clave);
@@ -44,13 +44,13 @@ const useLocalStorage = () => {
         return false;
       }
     },
-    [plataforma]
+    [plataform]
   );
 
   const getKey = useCallback(
     async (clave) => {
       try {
-        if (plataforma === "web") {
+        if (plataform === "web") {
           const valor = localStorage.getItem(clave);
           return valor || null;
         } else {
@@ -62,12 +62,12 @@ const useLocalStorage = () => {
         return null;
       }
     },
-    [plataforma]
+    [plataform]
   );
 
   const getStorage = useCallback(async () => {
     try {
-      if (plataforma === "web") {
+      if (plataform === "web") {
         const allData = {};
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
@@ -91,13 +91,36 @@ const useLocalStorage = () => {
       console.error("Error obteniendo storage completo:", error);
       return {};
     }
-  }, [plataforma]);
+  }, [plataform]);
+
+  const createFirstStorage = useCallback(
+    async (initialData) => {
+      try {
+        if (plataform === "web") {
+          for (const [key, value] of Object.entries(initialData)) {
+            localStorage.setItem(key, value);
+          }
+        } else {
+          await AsyncStorage.multiSet(
+            Object.entries(initialData).map(([key, value]) => [key, value])
+          );
+        }
+        return true;
+      } catch (error) {
+        console.error("Error creando storage inicial:", error);
+        return false;
+      }
+    },
+    [plataform]
+  );
+
 
   return {
     saveLocal,
     deleteLocal,
     getStorage,
     getKey,
+    createFirstStorage,
   };
 };
 

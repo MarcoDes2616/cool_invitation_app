@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { Platform } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 const MainContext = createContext();
 
@@ -9,17 +9,14 @@ export const MainProvider = ({ children }) => {
   const [language, setLanguage] = useState('es');
   const [hasBiometricAuth, setHasBiometricAuth] = useState(false);
   const [operatingSystem, setOperatingSystem] = useState(null);
-  
-  // Obtener las áreas seguras
-  const insets = useSafeAreaInsets();
-
-  // Configuración de áreas seguras
-  const safeArea = {
-    top: insets.top,
-    bottom: insets.bottom,
-    left: insets.left,
-    right: insets.right,
-  };
+  const {createFirstStorage, getKey, saveLocal} = useLocalStorage();
+  const firsLocalStorageSetup = {
+    languages: 'es',
+    userToken: '',
+    userData: '',
+    deviceId: '',
+    guestData: {},
+  }
 
   useEffect(() => {
     // Detectar plataforma
@@ -31,7 +28,22 @@ export const MainProvider = ({ children }) => {
     // Aquí luego agregarás la detección de autenticación biométrica
     // Por ahora lo dejamos en false
     setHasBiometricAuth(false);
+    createFirstStorage(firsLocalStorageSetup);
+    setLenguageByStorage();
   }, []);
+
+  useEffect(() => {
+    saveLocal('languages', language);
+  }, [language]);
+
+
+  const setLenguageByStorage = () => {
+    setLanguage(getKey('languages') || 'es');
+  };
+
+  const handleChangeLanguage = (lang) => {
+    setLanguage(lang);
+  }
 
   const value = {
     platform,
@@ -39,7 +51,7 @@ export const MainProvider = ({ children }) => {
     setLanguage,
     hasBiometricAuth,
     operatingSystem,
-    safeArea,
+    handleChangeLanguage,
   };
 
   return (

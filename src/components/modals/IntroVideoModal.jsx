@@ -17,20 +17,15 @@ const { width, height } = Dimensions.get('window');
 
 const IntroVideoModal = ({ visible, onClose }) => {
 
-  // 2. Crear y configurar el reproductor de video
-  // El archivo local se pasa con require()
   const player = useVideoPlayer(require('../../../assets/intro.mp4'), (player) => {
-    // Configuración inicial: no loop y reproducir automáticamente cuando el modal sea visible
     player.loop = true;
     if (visible) {
       player.play();
     }
   });
 
-  // 3. Escuchar el estado de reproducción
   const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player?.playing });
 
-  // 4. Efecto para pausar/reproducir según la visibilidad del modal
   useEffect(() => {
     if (!visible && player) {
       player.pause();
@@ -62,13 +57,12 @@ const IntroVideoModal = ({ visible, onClose }) => {
             <VideoView
               style={styles.video}
               player={player}
-              allowsFullscreen={false} // Puedes activarlo si lo deseas
+              // fullscreenOptions={false}
               allowsPictureInPicture={false}
-              nativeControls={true} // Usamos nuestros controles personalizados
+              nativeControls={false}
             />
           </View>
 
-          {/* Texto descriptivo (opcional, mantenido de tu versión) */}
           <View style={styles.descriptionContainer}>
             <Text style={styles.title}>¡Bienvenido a Cool Invitation! 🎉</Text>
             <Text style={styles.description}>
@@ -76,7 +70,6 @@ const IntroVideoModal = ({ visible, onClose }) => {
             </Text>
           </View>
 
-          {/* Botón para saltar/empezar */}
           <TouchableOpacity style={styles.skipButton} onPress={onClose}>
             <Text style={styles.skipButtonText}>Comenzar</Text>
           </TouchableOpacity>

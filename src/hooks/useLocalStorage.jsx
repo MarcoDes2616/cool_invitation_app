@@ -27,7 +27,7 @@ const useLocalStorage = () => {
         return false;
       }
     },
-    [plataform]
+    [plataform],
   );
 
   const deleteLocal = useCallback(
@@ -44,7 +44,7 @@ const useLocalStorage = () => {
         return false;
       }
     },
-    [plataform]
+    [plataform],
   );
 
   const getKey = useCallback(
@@ -62,7 +62,7 @@ const useLocalStorage = () => {
         return null;
       }
     },
-    [plataform]
+    [plataform],
   );
 
   const getStorage = useCallback(async () => {
@@ -86,7 +86,7 @@ const useLocalStorage = () => {
           allData[key] = value || null;
         }
         console.log(allData);
-        
+
         return allData;
       }
     } catch (error) {
@@ -99,24 +99,45 @@ const useLocalStorage = () => {
     async (initialData) => {
       try {
         if (plataform === "web") {
+          // Para web (localStorage)
           for (const [key, value] of Object.entries(initialData)) {
-            localStorage.setItem(key, value);
+            // Verificar si la clave ya existe
+            const existingValue = localStorage.getItem(key);
+            if (existingValue === null) {
+              // Solo guardar si no existe
+              localStorage.setItem(key, JSON.stringify(value));
+              console.log(`✅ Clave "${key}" creada`);
+            } else {
+              console.log(`⏭️  Clave "${key}" ya existe, omitiendo`);
+            }
           }
         } else {
-          const entries = Object.keys(initialData);
-
-          const local = await entries.map(key => saveLocal(key, initialData[key]));
-          await Promise.all(local);
+          for (const [key, value] of Object.entries(initialData)) {
+            try {
+              // Verificar si la clave ya existe
+              const existingValue = await AsyncStorage.getItem(key);
+              if (existingValue === null) {
+                // Solo guardar si no existe
+                await AsyncStorage.setItem(key, JSON.stringify(value));
+                // console.log(`✅ Clave "${key}" creada`);
+              } else {
+                // console.log(`⏭️  Clave "${key}" ya existe, omitiendo`);
+              }
+            } catch (itemError) {
+              console.error(`❌ Error con clave "${key}":`, itemError);
+            }
+          }
         }
+
+        console.log("✅ Storage inicial creado/actualizado correctamente");
         return true;
       } catch (error) {
-        console.error("Error creando storage inicial:", error);
+        console.error("❌ Error creando storage inicial:", error);
         return false;
       }
     },
-    [plataform]
+    [plataform],
   );
-
 
   return {
     saveLocal,

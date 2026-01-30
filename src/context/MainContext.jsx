@@ -25,9 +25,7 @@ export const MainProvider = ({ children }) => {
     
     // Detectar SO
     setOperatingSystem(Platform.OS === 'ios' ? 'iOS' : 'Android');
-    
-    // Aquí luego agregarás la detección de autenticación biométrica
-    // Por ahora lo dejamos en false
+    // Inicializar estado de autenticación biométrica
     setHasBiometricAuth(false);
     // createFirstStorage(firsLocalStorageSetup);
     setLenguageByStorage();

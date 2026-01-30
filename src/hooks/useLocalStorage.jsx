@@ -85,6 +85,8 @@ const useLocalStorage = () => {
           const value = await getKey(key);
           allData[key] = value || null;
         }
+        console.log(allData);
+        
         return allData;
       }
     } catch (error) {

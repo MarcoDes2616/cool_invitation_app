@@ -1,16 +1,25 @@
-// App.js
+import { StyleSheet } from "react-native";
+import { SafeAreaView } from "./src/components/SafeAreaView";
 import { MainProvider } from "./src/context/MainContext";
-import useLocalStorage from "./src/hooks/useLocalStorage";
-import AppContent from "./src/screens/AppContent";
+import AppContent from "./src/navigation/AppContent";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function App() {
-  const {createFirstStorage} = useLocalStorage();
+
   return (
     <SafeAreaProvider>
-      <MainProvider>
-        <AppContent />
-      </MainProvider>
+      <SafeAreaView style={styles.SafeAreaView}>
+        <MainProvider>
+          <AppContent />
+        </MainProvider>
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  SafeAreaView: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+  },
+})
